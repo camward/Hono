@@ -1,11 +1,14 @@
-import "./App.css";
+import { T } from '@admiral-ds/react-ui';
+import './App.css';
 
 function App() {
-	return (
-		<>
-			App
-		</>
-	);
+  return (
+    <>
+      <T font="Subtitle/Subtitle 1" as="p">
+        App
+      </T>
+    </>
+  );
 }
 
 export default App;
