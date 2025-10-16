@@ -46,7 +46,7 @@ export default defineConfig({
       },
       {
         test: /\.(ttf|otf)$/i,
-        type: "asset/resource",
+        type: 'asset/resource',
       },
     ],
   },
