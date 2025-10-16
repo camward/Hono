@@ -1,18 +1,21 @@
 import * as React from 'react';
 import type { ChangeEvent } from 'react';
 import { InputField, Button } from '@admiral-ds/react-ui';
+import { useAddUser } from '../../../hooks/useUsers';
 import './style.css';
 
 function UserActions() {
+  const { mutate, isPending, isError } = useAddUser();
+
   const [localValue, setValue] = React.useState<string>('');
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
   };
 
-  const addUser = () => {
+  const addUserHandler = () => {
     if (localValue) {
-      console.log('add', localValue);
+      mutate({ fio: localValue });
       setValue('');
     }
   };
@@ -28,11 +31,13 @@ function UserActions() {
       <Button
         appearance="primary"
         dimension="m"
-        onClick={addUser}
+        onClick={addUserHandler}
         disabled={!localValue}
+        loading={isPending}
       >
         Добавить
       </Button>
+      {isError && <div>Ошибка добавления пользователя</div>}
     </div>
   );
 }

@@ -1,51 +1,30 @@
 import * as React from 'react';
 import { Table, Button } from '@admiral-ds/react-ui';
 import type { Column, TableRow } from '@admiral-ds/react-ui';
+import type { User } from '../../../types/user';
+import { useGetUsers } from '../../../hooks/useUsers';
 
 function UserList() {
-  type RowData = TableRow & {
-    fio: string;
-    date: string;
-    status: string;
-    actions: React.ReactNode;
-  };
+  const { data: users, isLoading, isError } = useGetUsers();
+
+  type RowData = TableRow & User & { actions: React.ReactNode };
 
   const changeStatus = (data: number) => {
     console.log(data);
   };
 
-  const rowList: RowData[] = [
-    {
-      id: '0001',
-      fio: 'МНО',
-      date: new Date('2020-08-06').toLocaleDateString(),
-      status: '1',
-      actions: (
-        <Button
-          appearance="ghost"
-          dimension="s"
-          onClick={() => changeStatus(1)}
-        >
-          Изменить статус
-        </Button>
-      ),
-    },
-    {
-      id: '0002',
-      fio: 'МНО',
-      date: new Date('2020-08-06').toLocaleDateString(),
-      status: '2',
-      actions: (
-        <Button
-          appearance="ghost"
-          dimension="s"
-          onClick={() => changeStatus(2)}
-        >
-          Изменить статус
-        </Button>
-      ),
-    },
-  ];
+  const rowList: RowData[] = (users || [])?.map((user) => ({
+    ...user,
+    actions: (
+      <Button
+        appearance="ghost"
+        dimension="s"
+        onClick={() => changeStatus(user.id)}
+      >
+        Изменить статус
+      </Button>
+    ),
+  }));
 
   const columnList: Column[] = [
     {
@@ -84,7 +63,19 @@ function UserList() {
   };
 
   return (
-    <Table rowList={rowList} columnList={cols} onColumnResize={handleResize} />
+    <>
+      {isLoading && <div>Загрузка...</div>}
+
+      {isError && <div>Ошибка загрузки данных</div>}
+
+      {!isError && !isLoading && (
+        <Table
+          rowList={rowList}
+          columnList={cols}
+          onColumnResize={handleResize}
+        />
+      )}
+    </>
   );
 }
 
