@@ -13,7 +13,7 @@ app.use('*', cors());
 app.use("*", logger());
 
 // Регистрация маршрутов
-app.route("/users", userRoutes);
+app.route("/api", userRoutes);
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");

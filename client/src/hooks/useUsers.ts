@@ -4,19 +4,23 @@ import {
   UseQueryResult,
   UseMutationResult,
 } from '@tanstack/react-query';
-import { useQueryClient } from '@tanstack/react-query';
 import type { User } from '../types/user';
 
 type GetUsersResponse = User[];
 type AddUserRequest = Pick<User, 'fio'>;
 type AddUserResponse = User;
 
+type UpdateUserStatusRequest = Pick<User, 'id' | 'status'>;
+type UpdateUserStatusResponse = User;
+
+const baseUrl = 'http://localhost:3000/api';
+
 // Хук для получения списка пользователей
 export function useGetUsers(): UseQueryResult<GetUsersResponse> {
   return useQuery({
     queryKey: ['users'],
     queryFn: async () => {
-      const response = await fetch('/api/users');
+      const response = await fetch(`${baseUrl}/users`);
       return response.json();
     },
   });
@@ -29,11 +33,9 @@ export function useAddUser(): UseMutationResult<
   AddUserRequest,
   unknown
 > {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async ({ fio }: AddUserRequest) => {
-      const response = await fetch('/api/users', {
+      const response = await fetch(`${baseUrl}/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,10 +44,26 @@ export function useAddUser(): UseMutationResult<
       });
       return response.json();
     },
-    onSuccess: (newUser) => {
-      queryClient.setQueryData(['users'], (oldUsers: User[] | undefined) =>
-        oldUsers ? [...oldUsers, newUser] : [newUser],
-      );
+  });
+}
+
+// Хук для обновления статуса
+export function useUpdateUserStatus(): UseMutationResult<
+  UpdateUserStatusResponse,
+  unknown,
+  UpdateUserStatusRequest,
+  unknown
+> {
+  return useMutation({
+    mutationFn: async ({ id, status }: UpdateUserStatusRequest) => {
+      const response = await fetch(`${baseUrl}/users/${id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status }),
+      });
+      return response.json();
     },
   });
 }
