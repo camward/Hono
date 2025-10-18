@@ -45,7 +45,7 @@ function UserList() {
     {
       name: 'date',
       title: 'Дата создания',
-      width: 150,
+      width: 250,
     },
     {
       name: 'status',

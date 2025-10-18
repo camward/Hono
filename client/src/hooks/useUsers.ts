@@ -23,6 +23,7 @@ export function useGetUsers(): UseQueryResult<GetUsersResponse> {
       const response = await fetch(`${baseUrl}/users`);
       return response.json();
     },
+    refetchInterval: 5000, // обновлять каждые 5 секунд
   });
 }
 
